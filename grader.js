@@ -26,6 +26,8 @@ var program = require('commander');
 var cheerio = require('cheerio');
 var rest = require('restler');
 var temp = "temp.html";
+var outJsonFile = "outJson.json";
+var source = "";
 var HTMLFILE_DEFAULT = "index.html";
 var CHECKSFILE_DEFAULT = "checks.json";
 var FILEURL_DEFAULT = "http://fierce-plains-7838.herokuapp.com";
@@ -73,16 +75,16 @@ if(require.main == module) {
     if (program.url) {
         rest.get(program.url).on('complete', function(result){
 	    fs.writeFileSync(temp, result);
-            var checkJson = checkHtmlFile(temp, program.checks);
-	    var outJson = JSON.stringify(checkJson, null, 4);
-	    console.log(outJson);
 	});
+        source = temp;
     }
     else {
-	var checkJson = checkHtmlFile(program.file, program.checks);
-	var outJson = JSON.stringify(checkJson, null, 4);
-	console.log(outJson);
-    }	
+	source = program.file;
+    }
+    var checkJson = checkHtmlFile(source, program.checks);
+    var outJson = JSON.stringify(checkJson, null, 4);
+    console.log(outJson);
+    fs.writeFileSync(outJsonFile,outJson);
 } else {
     exports.checkHtmlFile = checkHtmlFile;
 }
